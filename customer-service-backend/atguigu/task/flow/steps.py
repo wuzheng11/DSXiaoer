@@ -2,6 +2,9 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
+from atguigu.task.flow.links import FlowStepLink, StaticLink, ConditionalLink, FallbackLink
+from atguigu.task.response.models import ResponseTemplate
+
 
 @dataclass
 class SlotValidation:
@@ -19,7 +22,7 @@ class FlowStepType(Enum):
 class FlowStep:
     id: str
     type: FlowStepType
-    next: list[FlowStep]= field(default_factory=list)
+    next: list[FlowStepLink]= field(default_factory=list)
     description: str = ""  # 扩展字段
 
     @classmethod
@@ -66,7 +69,7 @@ class StartFlowStep(FlowStep):
         return cls(**FlowStep.build_fields(step_data))
 
 @dataclass
-class CollectionSlotStep(FlowStep):
+class CollectSlotStep(FlowStep):
     slot_name:str =""
     template: ResponseTemplate = field(default_factory=ResponseTemplate)
     validation: SlotValidation | None = None
@@ -90,7 +93,7 @@ class CollectionSlotStep(FlowStep):
 
 
 @dataclass
-class ActionSlotStep(FlowStep):
+class ActionFlowStep(FlowStep):
     action: str =""
     args: dict[str,Any]=field(default_factory=dict)
 
