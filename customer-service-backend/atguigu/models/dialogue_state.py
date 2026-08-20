@@ -10,7 +10,7 @@ DIALOGUE_STATE_ADAPTER = TypeAdapter(DialogueState)
 
 class DialogueStateRecord(Base):
     """dialogue_states表的实体类"""
-
+    #表示数据库中的一条对话状态记录
     __tablename__ = "dialogue_states"
     sender_id: Mapped[str] = mapped_column(String(255), primary_key=True)
     state_json: Mapped[str] = mapped_column(Text, nullable=False)

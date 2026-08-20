@@ -15,7 +15,7 @@ class DialogueStateRepository:
         self.session = session
 
     async def load_state(self, sender_id: str) -> DialogueState:
-        # 将state从数据库加载出来
+        # 根据sender_id加载state
         """
         1. 根据 `sender_id` 查询 `DialogueStateRecord`。
         2. 使用 `scalar_one_or_none()` 取得状态记录。

@@ -3,6 +3,7 @@ from enum import Enum
 
 @dataclass
 class MessageObject:
+    #用户可以从页面中选择订单或商品
     type: str
     id: str
     title: str | None=None
@@ -10,11 +11,13 @@ class MessageObject:
 
 @dataclass
 class MessageType(Enum):
+    #文本消息和对象消息
     TEXT ="text"
     OBJECT ="object"
 
 @dataclass
 class UserMessage:
+    #表示Dialogueservice接收的一条用户消息
     sender_id: str
     message_id: str
     type: MessageType
