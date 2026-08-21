@@ -17,7 +17,7 @@ class FlowExecutor:
         self.condition_evaluator = condition_evaluator
         self.max_steps_per_turn = max_steps_per_turn
 
-    async def run_task(self, state: DialogueState, flows: FlowCatalog, user_message: UserMessage) -> list[BotMessage]:
+    async def run_task(self, state: DialogueState, flows: FlowCatalog, user_message: UserMessage) -> list[BotMessage]|None:
         """按步骤推进流程的执行，并返回机器人回复结果列表"""
 
         messages: list[BotMessage] = []
