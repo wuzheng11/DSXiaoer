@@ -32,3 +32,6 @@ TaskEvent: TypeAlias=(
     | TaskResumed
     | TaskCanceled
 )
+
+def xyz()->TaskEvent:
+    pass
