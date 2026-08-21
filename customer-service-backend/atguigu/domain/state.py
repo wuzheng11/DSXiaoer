@@ -2,7 +2,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
-from atguigu.domain.message import UserMessage
+from atguigu.domain.message import UserMessage, BotMessage
 from atguigu.task.lifecycle.models import TaskRef, TaskEvent, TaskStarted, TaskSwitched, TaskCanceled, TaskResumed
 
 
@@ -12,7 +12,7 @@ class Turn:
     #一个turn对应一次用户输入和由这次输入产生的全部客服回复
     turn_id: str
     user_message: UserMessage
-    bot_messages: list[UserMessage] = field(default_factory=list)
+    bot_messages: list[BotMessage] = field(default_factory=list)
 
 
 @dataclass
@@ -41,6 +41,8 @@ class SharedState:
     #保存任务型对话、知识检索型对话和闲聊型对话共同使用的状态
     focused_object: FocusedObject | None = None
     sessions: list[Session] = field(default_factory=list)
+    def current_session(self)->Session:
+        return self.sessions[-1]
 
 
 @dataclass
@@ -121,6 +123,9 @@ class TaskState:
     def set_slots(self, slots: dict[str, Any]) -> None:
         self.active.slots.update(slots)
 
+    def complete_active(self)->None:
+        self.active=None
+
 
 @dataclass
 class DialogueState:
@@ -129,7 +134,7 @@ class DialogueState:
 
     sender_id: str
     shared: SharedState = field(default_factory=SharedState)
-    task: TaskState = field(default_factory=TaskState)
+    tasks: TaskState = field(default_factory=TaskState)
 
 
 if __name__ == '__main__':
