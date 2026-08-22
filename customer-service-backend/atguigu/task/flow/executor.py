@@ -1,20 +1,23 @@
 from atguigu.domain.message import BotMessage, UserMessage
 from atguigu.domain.state import DialogueState
+from atguigu.task.action.runner import ActionRunner, ActionCall
 from atguigu.task.flow.conditions import ConditionEvaluator
 from atguigu.task.flow.links import StaticLink, FallbackLink, ConditionalLink
 from atguigu.task.flow.models import FlowCatalog
 from atguigu.task.flow.steps import StartFlowStep, ResponseFlowStep, CollectSlotStep, ActionFlowStep, EndFlowStep, \
     FlowStep
-
+from atguigu.task.response.rendered import ResponseRendered
 
 class FlowExecutor:
 
     def __init__(
             self,
-            response_renderer: ResponseRenderer,
+            action_runner: ActionRunner,
+            response_renderer: ResponseRendered,
             condition_evaluator: ConditionEvaluator,
             max_steps_per_turn: int = 100) -> None:
 
+        self.action_runner = action_runner
         self.response_renderer = response_renderer
         self.condition_evaluator = condition_evaluator
         self.max_steps_per_turn = max_steps_per_turn
@@ -62,7 +65,14 @@ class FlowExecutor:
                 continue
 
             if isinstance(step, ActionFlowStep):
-                pass
+                # 执行一个具体的动作
+                action_call = ActionCall(action_name=step.action, action_kwargs=step.args)
+                result = await self.action_runner.run(action_call, state)
+                state.tasks.set_slots(result.slot_updates)
+
+                # 推进流程到下一步
+                self._advance(step, state)
+                continue
 
             if isinstance(step, EndFlowStep):
                 state.tasks.complete_active()
